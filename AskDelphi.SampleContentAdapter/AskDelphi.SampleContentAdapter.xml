@@ -157,6 +157,14 @@
             <param name="topicId"></param>
             <returns></returns>
         </member>
+        <member name="M:AskDelphi.SampleContentAdapter.Controllers.ContentController.GetContentLastChangedDate(System.String)">
+            <summary>
+            Requests the date and time the content identified by the topic id was last changed. If the last changed date is unknown,
+            or the content has not been modified, the system may return a null value.
+            </summary>
+            <param name="topicId">Request topic id</param>
+            <returns>A datestamp with timezone indication indicating when the content was last changed.</returns>
+        </member>
         <member name="T:AskDelphi.SampleContentAdapter.Controllers.ResourcesController">
             <summary>
             For interacting with resources.
@@ -331,6 +339,25 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:AskDelphi.SampleContentAdapter.DTO.ContentLastChangedDateResponse">
+            <summary>
+            Indicates the utc date when the content was last changed
+            </summary>
+        </member>
+        <member name="M:AskDelphi.SampleContentAdapter.DTO.ContentLastChangedDateResponse.#ctor(AskDelphi.SampleContentAdapter.ServiceModel.IOperationContext)">
+            <summary></summary>
+        </member>
+        <member name="P:AskDelphi.SampleContentAdapter.DTO.ContentLastChangedDateResponse.LastChangedDate">
+            <summary>
+            Indicates the utc date when the content was last changed
+            </summary>
+        </member>
+        <member name="M:AskDelphi.SampleContentAdapter.DTO.ContentLastChangedDateResponse.Initialize(AskDelphi.SampleContentAdapter.ServiceModel.SCR{System.Nullable{System.DateTimeOffset}})">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:AskDelphi.SampleContentAdapter.DTO.ContentMetadataResponse">
             <summary>
             
@@ -498,7 +525,18 @@
             
             </summary>
         </member>
-        <member name="M:AskDelphi.SampleContentAdapter.HostedServices.CacheSynchronizationService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.SampleContentAdapter.HostedServices.CacheSynchronizationService},AskDelphi.SampleContentAdapter.Services.IOperationContextFactory,AskDelphi.SampleContentAdapter.ServiceModel.ITopicRepository)">
+        <member name="P:AskDelphi.SampleContentAdapter.HostedServices.CacheSynchronizationService.InitialDelay">
+            <summary>
+            Delay before the first update cycle is is started on the content repository.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.SampleContentAdapter.HostedServices.CacheSynchronizationService.Interval">
+            <summary>
+            Interval between updates of the content repository.
+            </summary>
+            
+        </member>
+        <member name="M:AskDelphi.SampleContentAdapter.HostedServices.CacheSynchronizationService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.SampleContentAdapter.HostedServices.CacheSynchronizationService},AskDelphi.SampleContentAdapter.Services.IOperationContextFactory,Microsoft.Extensions.Configuration.IConfiguration,AskDelphi.SampleContentAdapter.ServiceModel.ITopicRepository)">
             <summary>
             
             </summary>

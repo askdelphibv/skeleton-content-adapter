@@ -1,0 +1,17 @@
+{
+    "Title": "This is process 1",
+    "Description": "This is the description for the first topic",
+    "BusinessKey": "sample-unique-business-key-of-topic1",
+    "ContentDesignTopicTypeTitle": "Skill area",
+    "ContentJSON": "{}",
+    "Children": [
+
+    ],
+    "Relations": [
+        { "ContentDesignRelationTypeTitle": "See also", "TargetTopicID": "folder2/sample-unique-business-key-of-topic2"}
+    ],
+    "Tags": [
+        { "Hierarchy": "Classification", "Node": "Public" },
+        { "Hierarchy": "Hierarchy 2", "Node": "Node 2.B" }
+    ]    
+}

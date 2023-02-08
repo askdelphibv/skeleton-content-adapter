@@ -1,5 +1,6 @@
 ﻿using AskDelphi.SampleContentAdapter.ServiceModel;
 using AskDelphi.SampleContentAdapter.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace AskDelphi.SampleContentAdapter.HostedServices
 {
@@ -17,7 +19,19 @@ namespace AskDelphi.SampleContentAdapter.HostedServices
     {
         private readonly ILogger logger;
         private readonly IOperationContextFactory operationContextFactory;
+        private readonly IConfiguration configuration;
         private readonly ITopicRepository topicRepository;
+
+        /// <summary>
+        /// Delay before the first update cycle is is started on the content repository.
+        /// </summary>
+        public TimeSpan InitialDelay { get; }
+        /// <summary>
+        /// Interval between updates of the content repository.
+        /// </summary>
+        /// 
+        public TimeSpan Interval { get; }
+
         private Timer timer;
 
         /// <summary>
@@ -25,12 +39,17 @@ namespace AskDelphi.SampleContentAdapter.HostedServices
         /// </summary>
         public CacheSynchronizationService(
             ILogger<CacheSynchronizationService> logger, 
-            IOperationContextFactory operationContextFactory, 
+            IOperationContextFactory operationContextFactory,
+            IConfiguration configuration,
             ITopicRepository topicRepository)
         {
             this.logger = logger;
             this.operationContextFactory = operationContextFactory;
+            this.configuration = configuration;
             this.topicRepository = topicRepository;
+
+            this.InitialDelay = XmlConvert.ToTimeSpan(configuration.GetValue<string>("ContentUpdates:InitialDelay"));
+            this.Interval = XmlConvert.ToTimeSpan(configuration.GetValue<string>("ContentUpdates:Interval"));
         }
 
         /// <summary>
@@ -42,7 +61,7 @@ namespace AskDelphi.SampleContentAdapter.HostedServices
         {
             logger.LogInformation("CacheSynchronizationService is starting.");
 
-            timer = new Timer(async (_) => await DoWorkAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(60));
+            timer = new Timer(async (_) => await DoWorkAsync(), null, InitialDelay, Interval);
 
             return Task.CompletedTask;
         }
@@ -53,7 +72,7 @@ namespace AskDelphi.SampleContentAdapter.HostedServices
 
             try
             {
-                // TODO: Implement whatever is needed for the hourly sync of the content
+                await topicRepository.RefreshAsync(operationContextFactory.CreateBackgroundOperationContext());
             }
             catch (Exception ex)
             {

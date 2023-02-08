@@ -25,6 +25,11 @@ namespace AskDelphi.SampleContentAdapter.Services.SampleDataRepositories
             throw new NotImplementedException();
         }
 
+        public Task<SCR<DateTimeOffset?>> GetContentLastChangedDate(IOperationContext operationContext, string topicId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<SCR<TopicMetadata>> GetMetadata(IOperationContext operationContext, string topicId)
         {
             throw new NotImplementedException();

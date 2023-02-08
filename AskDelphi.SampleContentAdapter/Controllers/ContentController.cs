@@ -97,5 +97,22 @@ namespace AskDelphi.SampleContentAdapter.Controllers
 
             return response;
         }
+
+        /// <summary>
+        /// Requests the date and time the content identified by the topic id was last changed. If the last changed date is unknown,
+        /// or the content has not been modified, the system may return a null value.
+        /// </summary>
+        /// <param name="topicId">Request topic id</param>
+        /// <returns>A datestamp with timezone indication indicating when the content was last changed.</returns>
+        [HttpGet]
+        [Route("lastchangeddate")]
+        public async Task<ContentLastChangedDateResponse> GetContentLastChangedDate([FromQuery] string topicId)
+        {
+            ContentLastChangedDateResponse response = new ContentLastChangedDateResponse(HttpContext.GetOperationContext());
+            SCR<DateTimeOffset?> scr = await topicRepository.GetContentLastChangedDate(HttpContext.GetOperationContext(), topicId);
+            Response.StatusCode = response.Initialize(scr);
+
+            return response;
+        }
     }
 }
