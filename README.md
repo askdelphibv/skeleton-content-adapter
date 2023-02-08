@@ -1,4 +1,4 @@
-# Sample adapter for AskDelphi
+# Skeleton adapter for AskDelphi
 
 This is an empty framework that can be used to implement a content Adapter for AskDelphi
 

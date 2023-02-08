@@ -1,0 +1,911 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AskDelphi.ContentAdapter</name>
+    </assembly>
+    <members>
+        <member name="T:AskDelphi.ContentAdapter.Constants">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.APIVersion1">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.Success">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.Fail">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ClaimTypeSystemID">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ClaimTypeTenant">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ClaimTypeProject">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorFailedCode">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorFailedMessage">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorInternal">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorInternalMessage">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorInvalidCredentialsCode">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorInvalidCredentialsMessage">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorNotSupportedCode">
+            <summary></summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Constants.ErrorNotSupportedMessage">
+            <summary></summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Controllers.AdminController">
+            <summary>
+            For interacting with resources.
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.AdminController.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Controllers.ContentController})">
+            <summary>
+            
+            </summary>    
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Controllers.AuthenticationController">
+            <summary>
+            AuthenticationController
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.AuthenticationController.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Controllers.AuthenticationController},AskDelphi.ContentAdapter.Services.IAuthenticationService)">
+            <summary>
+            AuthenticationController
+            </summary>
+            <param name="logger"></param>
+            <param name="authenticationService"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.AuthenticationController.PostAuthLogin(AskDelphi.ContentAdapter.DTO.ClaimTuple[])">
+            <summary>
+            This method can be used to ‘log in’ to the adapter using the secret API key.
+            </summary>
+            <remarks>
+            This method can be used to ‘log in’ to the adapter using the secret API key 
+            that should only be known to systems that have access to the API.
+            
+            If claims are specified, the API may encode some details of the logged-in 
+            user in the claims part of the returned JWT token.Having those details in
+            there could allow other calls to this API to customize results based on the
+            logged-in user’s authentication claims.
+            
+            A refresh token may be returned to allow an implementation to extend the
+            lifetime of a JWT token. Supporting this functionality is entirely optional. 
+            Functionally there is no need to support refresh tokens, as the caller should
+            be able to use the login endpoint again to get a new token.
+            
+            The lifetime of the returned JWT token should be limited and should not
+            exceed 60 minutes.
+            
+            JWT Tokens must comply with[RFC7519] and must include “aud”, “nbf” and 
+            “exp” fields
+            </remarks>
+            <param name="claims">JSON-encoded array of tuples { "type": &lt;string>, "value": &lt;string> } 
+            containing the claims of the currently logged-in user.The adapter
+            that implements this function may use this to determine the user’s
+            identity on the customer CMS.
+            The caller of this API will always include a special claim of type
+            http://tempuri.org/askdelphi/remote-system-id with a string value. 
+            This special claim provides the system with an identification of itself
+            inside the AskDelphi environment.
+            If the content APIs need to return automatically generated remote
+            content objects, they can include the value of this claim as an ID. If
+            the claim is not present, they can use an empty string.</param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.AuthenticationController.GetAuthLogout">
+            <summary>
+            This method can be used to log out a token, invalidating the token immediately.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.AuthenticationController.GetAuthRefresh(System.String)">
+            <summary>
+            This method is not currently supported by this adapter.
+            </summary>
+            <param name="refresh"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Controllers.ContentController">
+            <summary>
+            For interacting with content.
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ContentController.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Controllers.ContentController},AskDelphi.ContentAdapter.ServiceModel.ITopicRepository)">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ContentController.GetFolders(System.String)">
+            <summary>
+            Returns all sub-folders for a folder.
+            </summary>
+            <param name="folderId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ContentController.PostSearch(AskDelphi.ContentAdapter.DTO.ContentSearchRequest)">
+            <summary>
+            Used to search for content using specific criteria.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ContentController.GetMetadata(System.String)">
+            <summary>
+            Requests metadata of a content item.
+            </summary>
+            <param name="topicId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ContentController.GetContent(System.String)">
+            <summary>
+            Request all topics and related content topics of a specific content item.
+            </summary>
+            <param name="topicId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ContentController.GetContentLastChangedDate(System.String)">
+            <summary>
+            Requests the date and time the content identified by the topic id was last changed. If the last changed date is unknown,
+            or the content has not been modified, the system may return a null value.
+            </summary>
+            <param name="topicId">Request topic id</param>
+            <returns>A datestamp with timezone indication indicating when the content was last changed.</returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Controllers.ResourcesController">
+            <summary>
+            For interacting with resources.
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ResourcesController.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Controllers.ContentController},AskDelphi.ContentAdapter.ServiceModel.IResourceRepository)">
+            <summary>
+            
+            </summary>    
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ResourcesController.GetResourcesList(System.String)">
+            <summary>
+            List all resources in a specific folder.
+            </summary>
+            <param name="folderId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ResourcesController.GetResourcesSearch(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            Search for resources using certain parameters.
+            </summary>
+            <param name="query"></param>
+            <param name="page"></param>
+            <param name="size"></param>
+            <param name="continuationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ResourcesController.GetResourcesMetadata(System.String)">
+            <summary>
+            Return resource metadata for a specific resource.
+            </summary>
+            <param name="resourceId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ResourcesController.HeadResourcesContent(System.String)">
+            <summary>
+            HEAD method for partial downloads.
+            </summary>
+            <param name="resourceId">Target resource id</param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Controllers.ResourcesController.GetResourcesContent(System.String)">
+            <summary>
+            Gets the resource binary content, supports partial downloads.
+            </summary>
+            <param name="resourceId">Target resource id</param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.APIResponseBase">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.DTO.APIResponseBase.operationContext">
+            <summary></summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.APIResponseBase.Success">
+            <summary>
+            True if the operation succeeded, false otherwise.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.APIResponseBase.Version">
+            <summary>
+            API version used.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.APIResponseBase.Id">
+            <summary>
+            The identifier for the operation.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.APIResponseBase.Code">
+            <summary>
+            When success is false, this contains the unique error code for the failure.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.APIResponseBase.Message">
+            <summary>
+            When success is false, this contains the error message containing more details about what failed.
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.APIResponseBase.#ctor(System.String,AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary></summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.AuthLoginResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.AuthLoginResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.AuthLoginResponse.Token">
+            <summary>
+            A valid JWT token created just for this application.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.AuthLoginResponse.Refresh">
+            <summary>
+            Not supporting refresh tokens
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.AuthLogoutResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.AuthLogoutResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.AuthRefreshResponse">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.AuthRefreshResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.AuthRefreshResponse.Token">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ContentContentResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentContentResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentContentResponse.Contents">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentContentResponse.Initialize(AskDelphi.ContentAdapter.ServiceModel.SCR{AskDelphi.ContentAdapter.DTO.TopicContent[]})">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ContentFoldersResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentFoldersResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentFoldersResponse.Folders">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentFoldersResponse.Initialize(AskDelphi.ContentAdapter.ServiceModel.SCR{System.Collections.Generic.IEnumerable{AskDelphi.ContentAdapter.DTO.FolderDescriptor}})">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ContentLastChangedDateResponse">
+            <summary>
+            Indicates the utc date when the content was last changed
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentLastChangedDateResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary></summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentLastChangedDateResponse.LastChangedDate">
+            <summary>
+            Indicates the utc date when the content was last changed
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentLastChangedDateResponse.Initialize(AskDelphi.ContentAdapter.ServiceModel.SCR{System.Nullable{System.DateTimeOffset}})">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ContentMetadataResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentMetadataResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentMetadataResponse.Meta">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentMetadataResponse.Initialize(AskDelphi.ContentAdapter.ServiceModel.SCR{AskDelphi.ContentAdapter.DTO.TopicMetadata})">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ContentSearchResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ContentSearchResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentSearchResponse.TotalCount">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentSearchResponse.ContinuationToken">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ContentSearchResponse.Topics">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ErrorResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ErrorResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ResourceContentResponse">
+            <summary>
+            Resource content response
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ResourceContentResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ResourceContentResponse.Initialize(AskDelphi.ContentAdapter.ServiceModel.SCR{AskDelphi.ContentAdapter.ServiceModel.DTO.ResourceContent})">
+            <summary></summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ResourcesListResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ResourcesListResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesListResponse.Folders">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesListResponse.Resources">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ResourcesMetadataResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ResourcesMetadataResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesMetadataResponse.Meta">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.DTO.ResourcesSearchResponse">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.DTO.ResourcesSearchResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesSearchResponse.TotalCount">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesSearchResponse.Page">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesSearchResponse.ContinuationToken">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.DTO.ResourcesSearchResponse.Resouces">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Filters.GlobalRequestFilter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Filters.GlobalRequestFilter.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Filters.GlobalRequestFilter},AskDelphi.ContentAdapter.Services.IOperationContextFactory)">
+            <summary>
+            
+            </summary>
+            <param name="logger"></param>
+            <param name="operationContextFactory"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Filters.GlobalRequestFilter.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Filters.GlobalRequestFilter.OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.InitialDelay">
+            <summary>
+            Delay before the first update cycle is is started on the content repository.
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.Interval">
+            <summary>
+            Interval between updates of the content repository.
+            </summary>
+            
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService},AskDelphi.ContentAdapter.Services.IOperationContextFactory,Microsoft.Extensions.Configuration.IConfiguration,AskDelphi.ContentAdapter.ServiceModel.ITopicRepository)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.StartAsync(System.Threading.CancellationToken)">
+            <summary>
+            
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.StopAsync(System.Threading.CancellationToken)">
+            <summary>
+            
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.Dispose">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.HttpContextExtensions">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.HttpContextExtensions.GetOperationContext(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.HttpContextExtensions.SetOperationContext(Microsoft.AspNetCore.Http.HttpContext,AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary></summary>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.Cache.CacheKey">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.Services.Cache.CacheKey.Region">
+            <summary>
+            Identifies the region in the cache where the data is to be stored. Is considered part of the key, and may be used bu the implementation to select the appropriate cache region to store the data in.
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.CacheKey.AsString">
+            <summary>
+            Returns a string that's unique for this cache key instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.Cache.IMemoryCacheService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.IMemoryCacheService.GetAsync``1(AskDelphi.ContentAdapter.Services.Cache.CacheKey)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.IMemoryCacheService.SetWithAbsoluteExpirationAsync``1(AskDelphi.ContentAdapter.Services.Cache.CacheKey,``0,System.DateTimeOffset)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expiresAt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.IMemoryCacheService.SetWithSlidingExpiration``1(AskDelphi.ContentAdapter.Services.Cache.CacheKey,``0,System.TimeSpan)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expireAfter"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.Cache.MemoryCacheService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.MemoryCacheService.#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+            <summary>
+            
+            </summary>
+            <param name="memoryCache"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.MemoryCacheService.GetAsync``1(AskDelphi.ContentAdapter.Services.Cache.CacheKey)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.MemoryCacheService.SetWithAbsoluteExpirationAsync``1(AskDelphi.ContentAdapter.Services.Cache.CacheKey,``0,System.DateTimeOffset)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expiresAt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.Cache.MemoryCacheService.SetWithSlidingExpiration``1(AskDelphi.ContentAdapter.Services.Cache.CacheKey,``0,System.TimeSpan)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expireAfter"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.IAuthenticationService">
+            <summary>
+            Authentication services.
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.IAuthenticationService.Login(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,AskDelphi.ContentAdapter.DTO.AuthLoginResponse,System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues},AskDelphi.ContentAdapter.DTO.ClaimTuple[])">
+            <summary>
+            Requests a session to be logged in. Upon success, will update the response object with a JWT object containing information about the logged-in session.
+            </summary>
+            <remarks>
+            The authorization header will have to contain the value Bearer {login}:{password}. The login-password options supported are stored as Keys:{login} = {password} properties in the application configuration.
+            </remarks>
+            <param name="operationContext">Context for the operation.</param>
+            <param name="response">Response object that can be returned on the API.</param>
+            <param name="authHeader">The authentication header containing the Authorization header value for the login request.</param>
+            <param name="claims">Optional list of additional claims that can be requested to be included in the resulting JWT object. This can be used to encode additional information that is relevant to the current session and can be communicated to all other operations via the claims. The caller of this API will always include a special claim of type http://tempuri.org/askdelphi/remote-system-id with a string value. This special claim provides the system with an identification of itself inside the AskDelphi environment.</param>
+            <returns>true upon success, false otherwise</returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.IAuthenticationService.Logout(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,AskDelphi.ContentAdapter.DTO.AuthLogoutResponse)">
+            <summary>
+            Requests the session to be logged out.
+            </summary>
+            <param name="operationContext">Operation context containing the session information.</param>
+            <param name="response">Response object that can be returned on the API.</param>
+            <returns>true upon success, false otherwise</returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.IAuthenticationService.Refresh(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,AskDelphi.ContentAdapter.DTO.AuthRefreshResponse,System.String)">
+            <summary>
+            Requests a new JWT object to be created for the same session that's currently used. Implementing this method is optional. If not implemented, the method will return a null-token and return false.
+            </summary>
+            <param name="operationContext">Operation context containing the session information.</param>
+            <param name="response">Response object that can be returned on the API.</param>
+            <param name="refreshToken">The refresh token that was generated when the JWT object was first returned.</param>
+            <returns>true upon success, false otherwise</returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.IOperationContextFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.IOperationContextFactory.CreateOperationContext(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.IOperationContextFactory.CreateBackgroundOperationContext">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.ITokenService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.ITokenService.GenerateToken(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,System.String,AskDelphi.ContentAdapter.DTO.ClaimTuple[])">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <param name="purpose"></param>
+            <param name="claims"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.ITokenService.InvalidateToken(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.ITokenService.Refresh(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <param name="refreshToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.ITokenService.ValidateToken(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.AuthenticationService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.AuthenticationService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Services.AuthenticationService},Microsoft.Extensions.Configuration.IConfiguration,AskDelphi.ContentAdapter.Services.ITokenService)">
+            <summary>
+            
+            </summary>
+            <param name="logger"></param>
+            <param name="configuration"></param>
+            <param name="tokenService"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.AuthenticationService.Login(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,AskDelphi.ContentAdapter.DTO.AuthLoginResponse,System.Collections.Generic.KeyValuePair{System.String,Microsoft.Extensions.Primitives.StringValues},AskDelphi.ContentAdapter.DTO.ClaimTuple[])">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.AuthenticationService.Logout(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,AskDelphi.ContentAdapter.DTO.AuthLogoutResponse)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <param name="response"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.AuthenticationService.Refresh(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,AskDelphi.ContentAdapter.DTO.AuthRefreshResponse,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <param name="response"></param>
+            <param name="refreshToken"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.TokenService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:AskDelphi.ContentAdapter.Services.TokenService.TokenLifetime">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.TokenService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.Services.TokenService},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            
+            </summary>
+            <param name="logger"></param>
+            <param name="configuration"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.TokenService.GenerateToken(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,System.String,AskDelphi.ContentAdapter.DTO.ClaimTuple[])">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <param name="purpose"></param>
+            <param name="claims"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.TokenService.InvalidateToken(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.TokenService.Refresh(AskDelphi.ContentAdapter.ServiceModel.IOperationContext,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <param name="refreshToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.TokenService.ValidateToken(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
+            <summary>
+            
+            </summary>
+            <param name="operationContext"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Services.OperationContextFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            
+            </summary>
+            <param name="configuration"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.CreateBackgroundOperationContext">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.CreateOperationContext(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.OperationId">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.Dispose">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.GetAuthToken">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.GetAskDelphiSystemID">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.InitializeFromRequest(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>
+            
+            </summary>
+            <param name="request"></param>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Services.OperationContextFactory.OperationContext.ToString">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:AskDelphi.ContentAdapter.Startup">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Startup.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary></summary>
+        </member>
+        <member name="P:AskDelphi.ContentAdapter.Startup.Configuration">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary></summary>
+        </member>
+        <member name="M:AskDelphi.ContentAdapter.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary></summary>
+        </member>
+    </members>
+</doc>
