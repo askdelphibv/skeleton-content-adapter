@@ -21,6 +21,7 @@ namespace AskDelphi.ContentAdapter.HostedServices
         private readonly IOperationContextFactory operationContextFactory;
         private readonly IConfiguration configuration;
         private readonly ITopicRepository topicRepository;
+        private readonly IResourceRepository resourceRepository;
 
         /// <summary>
         /// Delay before the first update cycle is is started on the content repository.
@@ -41,13 +42,14 @@ namespace AskDelphi.ContentAdapter.HostedServices
             ILogger<CacheSynchronizationService> logger, 
             IOperationContextFactory operationContextFactory,
             IConfiguration configuration,
-            ITopicRepository topicRepository)
+            ITopicRepository topicRepository,
+            IResourceRepository resourceRepository)
         {
             this.logger = logger;
             this.operationContextFactory = operationContextFactory;
             this.configuration = configuration;
             this.topicRepository = topicRepository;
-
+            this.resourceRepository = resourceRepository;
             this.InitialDelay = XmlConvert.ToTimeSpan(configuration.GetValue<string>("ContentUpdates:InitialDelay"));
             this.Interval = XmlConvert.ToTimeSpan(configuration.GetValue<string>("ContentUpdates:Interval"));
         }
@@ -73,10 +75,11 @@ namespace AskDelphi.ContentAdapter.HostedServices
             try
             {
                 await topicRepository.RefreshAsync(operationContextFactory.CreateBackgroundOperationContext());
+                await resourceRepository.RefreshAsync(operationContextFactory.CreateBackgroundOperationContext());
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Cache sync failed");
+                logger.LogError(ex, $"Failed to synchronize data caches.");
             }
 
             await Task.FromResult(0);

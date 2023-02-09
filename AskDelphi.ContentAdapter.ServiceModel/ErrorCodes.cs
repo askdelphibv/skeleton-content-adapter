@@ -8,11 +8,11 @@ namespace AskDelphi.ContentAdapter.ServiceModel
 {
     public static class ErrorCodes
     {
-        public const string ArisExportDownloaderFileNotFound = "AEDL_NODATA";
-        public const string ArisExportDownloaderFileNotFoundMessage = "Data not found or not accessible";
-
         public const string TopicRepositoryFileNotFound = "TR_404";
         public const string TopicRepositoryFileNotFoundMessage = "File or path to file was not found or not accessible";
+
+        public const string ResourceRepositoryFileNotFound = "RR_404";
+        public const string ResourceRepositoryFileNotFoundMessage = "File or path to file was not found or not accessible";
 
         public const string TopicRepositoryDataNotFound = "TR_NODATA";
         public const string TopicRepositoryDataNotFoundMessage = "Data not found or not accessible";

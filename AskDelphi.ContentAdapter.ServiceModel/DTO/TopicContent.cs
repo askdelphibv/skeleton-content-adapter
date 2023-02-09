@@ -37,14 +37,9 @@ namespace AskDelphi.ContentAdapter.DTO
         /// </summary>
         public string Content { get; set; }
 
-        /// <summary>
-        /// Not part of the standard. This is the Guid of the model item that this topic is based on.
-        /// </summary>
-        public string ArisModelGuid { get; set; }
-
         public override string ToString()
         {
-            return $"{GetType().Name}, Guid={Guid}, ModelGuid={ArisModelGuid}, Title={BasicData?.TopicTitle}, ID={TopicId}";
+            return $"{GetType().Name}, Guid={Guid}, Title={BasicData?.TopicTitle}, ID={TopicId}";
         }
     }
 }

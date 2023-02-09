@@ -47,5 +47,11 @@ namespace AskDelphi.ContentAdapter.ServiceModel
         /// <param name="resourceId"></param>
         /// <returns></returns>
         Task<SCR<(Stream resourceString, long contentLength, string contentType)>> GetResourceStream(IOperationContext operationContext, string resourceId);
+
+        /// <summary>
+        /// Requests a refresh.
+        /// </summary>
+        /// <returns>True if refresh was started, false otherwise.</returns>
+        Task<SCR<bool>> RefreshAsync(IOperationContext operationContext);
     }
 }
