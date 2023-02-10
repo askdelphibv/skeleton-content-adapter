@@ -47,7 +47,7 @@ namespace AskDelphi.ContentAdapter.Controllers
         {
             ResourcesListResponse response = new ResourcesListResponse(HttpContext.GetOperationContext());
             SCR<(IEnumerable<FolderDescriptor> folders, IEnumerable<ResourceDescriptor> resources)> getResourcesListSCR = await resourceRepository.GetResourcesList(HttpContext.GetOperationContext(), folderId);
-            response.InitializeFromSCR(getResourcesListSCR);
+            response.Initialize(getResourcesListSCR);
             return response;
         }
 
@@ -65,7 +65,7 @@ namespace AskDelphi.ContentAdapter.Controllers
         {
             ResourcesSearchResponse response = new ResourcesSearchResponse(HttpContext.GetOperationContext());
             SCR<(IEnumerable<ResourceDescriptor> resources, int totalCount, string continuationToken)> searchResourceSCR = await resourceRepository.SearchForResource(HttpContext.GetOperationContext(), query, page, size, continuationToken);
-            response.InitializeFromSCR(searchResourceSCR);
+            response.Initialize(page, searchResourceSCR);
             return response;
         }
 
@@ -80,7 +80,7 @@ namespace AskDelphi.ContentAdapter.Controllers
         {
             ResourcesMetadataResponse response = new ResourcesMetadataResponse(HttpContext.GetOperationContext());
             SCR<ResourceMetadata> scr = await resourceRepository.GetResourceMetadata(HttpContext.GetOperationContext(), resourceId);
-            response.InitializeFromSCR(scr);
+            response.Initialize(scr);
             return response;
         }
 
