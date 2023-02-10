@@ -1,8 +1,10 @@
 # Skeleton adapter for AskDelphi
+## Implemented to target a folder in the local filesystem
 
-This is an empty framework that can be used to implement a content Adapter for AskDelphi
+In the skeleton data adapter (https://github.com/askdelphibv/skeleton-content-adapter) you can find a solution that implements all plumbing that's needed when creating a data adapter for AskDelphi.
 
-What's needed is that a module is built that wraps access to the actual data.
+In this branch we implement the ```SampleDataResourceRepository``` and ```SampleDataTopicRepository``` classes to return sensible Process/Task content from an actual data source (being some JSON files and some images on the local filesystem).
 
-Then on top of that module, IResourceRepository and ITopicRepository implemenattions can be built that actually serve content according to the adapter rules.
+Before you can run this, make sure that you update the ```DataFolder```path in 'appsettings.json' to point to the folder that you cloned this branch into.
 
+Make sure that beofre releasing to production you update the API keys in the appsettings.
