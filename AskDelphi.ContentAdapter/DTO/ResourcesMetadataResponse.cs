@@ -3,6 +3,7 @@ using AskDelphi.ContentAdapter.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Threading.Tasks;
 
 namespace AskDelphi.ContentAdapter.DTO
@@ -22,5 +23,14 @@ namespace AskDelphi.ContentAdapter.DTO
         /// 
         /// </summary>
         public ResourceMetadata Meta { get; set; }
+
+        internal int Initialize(SCR<ResourceMetadata> scr)
+        {
+            if (!scr.IsError)
+            {
+                Meta = scr.Result;
+            }
+            return base.InitializeFromSCR(scr);
+        }
     }
 }

@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AskDelphi.ContentAdapter", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A19E3C6-CF01-4EB5-9450-D28DA01B25D9}"
 	ProjectSection(SolutionItems) = preProject
-		documentation\2021-01 - Adapter API for live integration with customer CMS-DMS v1.0.pdf = documentation\2021-01 - Adapter API for live integration with customer CMS-DMS v1.0.pdf
-		azure-pipeline-aspnet-app.yml = azure-pipeline-aspnet-app.yml
-		build-net60.yaml = build-net60.yaml
-		iguide-export-datastructure.png = iguide-export-datastructure.png
 		README.md = README.md
 	EndProjectSection
 EndProject

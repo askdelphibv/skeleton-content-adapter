@@ -37,5 +37,17 @@ namespace AskDelphi.ContentAdapter.DTO
         /// 
         /// </summary>
         public ResourceDescriptor[] Resouces { get; set; }
+
+        internal int Initialize(int page, SCR<(IEnumerable<ResourceDescriptor> resources, int totalCount, string continuationToken)> scr)
+        {
+            if (!scr.IsError)
+            {
+                TotalCount = scr.Result.totalCount;
+                Page = page;
+                ContinuationToken = scr.Result.continuationToken;
+                Resouces = (scr.Result.resources ?? new ResourceDescriptor[] { }).ToArray();
+            }
+            return base.InitializeFromSCR(scr);
+        }
     }
 }

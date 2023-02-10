@@ -27,5 +27,15 @@ namespace AskDelphi.ContentAdapter.DTO
         /// 
         /// </summary>
         public ResourceDescriptor[] Resources { get; set; }
+
+        internal int Initialize(SCR<(IEnumerable<FolderDescriptor> folders, IEnumerable<ResourceDescriptor> resources)> scr)
+        {
+            if (!scr.IsError)
+            {
+                Folders = (scr.Result.folders ?? new FolderDescriptor[] { }).Select(x => x).ToArray();
+                Resources= (scr.Result.resources ?? new ResourceDescriptor[] { }).Select(x => x).ToArray();
+            }
+            return base.InitializeFromSCR(scr);
+        }
     }
 }
