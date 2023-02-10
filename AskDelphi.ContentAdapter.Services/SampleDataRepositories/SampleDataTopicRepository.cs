@@ -62,7 +62,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             {
                 return SCR<TopicContent[]>.FromError(ErrorCodes.TopicRepositoryFileNotFound, ErrorCodes.TopicRepositoryFileNotFoundMessage, System.Net.HttpStatusCode.NotFound);
             }
-            var file = new FileInfo(Path.Combine(dataFolder.FullName, topicId.Split('\\').FirstOrDefault()));
+            var file = new FileInfo(Path.Combine(dataFolder.FullName, topicId.Trim('/').Split('/').FirstOrDefault()));
             return await topicFactory.CreateTopic(operationContext, topicId, file);
         }
 
@@ -75,7 +75,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             {
                 return SCR<DateTimeOffset?>.FromError(ErrorCodes.TopicRepositoryFileNotFound, ErrorCodes.TopicRepositoryFileNotFoundMessage, System.Net.HttpStatusCode.NotFound);
             }
-            var file = new FileInfo(Path.Combine(dataFolder.FullName, topicId.Split('\\').FirstOrDefault()));
+            var file = new FileInfo(Path.Combine(dataFolder.FullName, topicId.Trim('/').Split('/').FirstOrDefault()));
             return SCR<DateTimeOffset?>.FromData(await Task.FromResult(file.LastWriteTimeUtc));
         }
 
@@ -107,8 +107,8 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             List<TopicDescriptor> freshTopicDescriptors = new List<TopicDescriptor>();
             foreach (var file in dataFolder.GetFiles())
             {
-                string topicId = $"{file.Name}";
-                IEnumerable<TopicDescriptor> descriptors = await topicFactory.GetDescriptors(file, topicId);
+                string topicId = $"/{file.Name}";
+                IEnumerable<TopicDescriptor> descriptors = await topicFactory.GetDescriptors(operationContext, file, topicId);
                 freshTopicDescriptors.AddRange(descriptors);
             }
 

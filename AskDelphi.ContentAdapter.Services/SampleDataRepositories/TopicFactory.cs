@@ -1,6 +1,7 @@
 ﻿using AskDelphi.ContentAdapter.DTO;
 using AskDelphi.ContentAdapter.ServiceModel;
 using AskDelphi.ContentAdapter.Services.Utilities;
+using Imola.API.Interop.Content;
 using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
 {
@@ -32,17 +34,25 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
 
             // The file always represents one single process, followed by a collection of tasks, and an image topic representing the thumbnail, referring to the thumbnail resource by ID
 
-            // Add the content topics
-            TopicContent imageTopic = CreateImageTopic(operationContext, process, $"{topicId}\\{process.Thumbnail}");
+            string processTopicId = GetProcessTopicID(topicId);
 
-            result.Add(await CreateProcessTopic(operationContext, process, topicId, imageTopic));
+            // Add the content topics
+            TopicContent imageTopic = CreateImageTopic(operationContext, process, $"{processTopicId}/{process.Thumbnail}");
+
+            result.Add(await CreateProcessTopic(operationContext, process, processTopicId, imageTopic));
             result.Add(imageTopic);
             if (null != process.Tasks)
             {
-                result.AddRange(process.Tasks.Select(x => CreateTaskTopic(operationContext, x, $"{topicId}\\{x.Id}")));
+                result.AddRange(process.Tasks.Select(x => CreateTaskTopic(operationContext, x, $"{processTopicId}/{x.Id}")));
             }
 
-            return await Task.FromResult(SCR<TopicContent[]>.FromData(result.ToArray()));
+            SCR<TopicContent[]> response = await Task.FromResult(SCR<TopicContent[]>.FromData(result.ToArray()));
+            if (IsChildTopic(topicId))
+            {
+                // If this is not the 'root topic'
+                MoveRequestedChildToHeadOfTheList(topicId, response);
+            }
+            return response;
         }
 
         private TopicContent CreateImageTopic(IOperationContext operationContext, ProcessEntry process, string topicId)
@@ -70,7 +80,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                     Version = AskDelphiCMSAdapter.DefaultVersion
                 },
                 Content = CreateDoppioImageTopicJSON(process, resourcePath, mimeType),
-                Guid = new Guid(process.Id),
+                Guid = GuidUtility.Create(GuidUtility.UrlNamespace, resourcePath), // the path is unique for this resource so perfect for creating a guid from
                 Relations = new TopicContentRelationData
                 {
                     References = new List<TopicContentRelationReference>(),
@@ -103,9 +113,9 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
         private async Task<TopicContent> CreateProcessTopic(IOperationContext operationContext, ProcessEntry process, string topicId, TopicContent thumbnailTolpic)
         {
             int i = 0;
-            var relationTypeKey = await cmsAdapter.GetRelationTypeKeyFor(operationContext, AskDelphiCMSAdapter.ProcessTaskRelationPyramidLevelTitle, 
+            Guid processTaskRelationTypeKey = await cmsAdapter.GetRelationTypeKeyFor(operationContext, AskDelphiCMSAdapter.ProcessTaskRelationPyramidLevelTitle, 
                 AskDelphiCMSAdapter.TaskTopicTypeTitle, AskDelphiCMSAdapter.TaskTopicNamespace, "Relation", "Default");
-            return new TopicContent
+            TopicContent result = new TopicContent
             {
                 BasicData = new TopicContentBasicData
                 {
@@ -132,17 +142,32 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                         IsInferredFromContent = false,
                         Metadata = new List<DTO.KeyValuePair>(),
                         PyramidLevel = AskDelphiCMSAdapter.ProcessTaskRelationPyramidLevelTitle,
-                        RelationTypeKey = relationTypeKey,
+                        RelationTypeKey = processTaskRelationTypeKey,
                         SequenceNumber = ++i,
                         TargetTopicGuid = new Guid(x.Id),
                         TargetTopicNamespaceUri = AskDelphiCMSAdapter.TaskTopicNamespace,
                         TargetTopicTitle = x.Title,
-                        Use = "Relation",
+                        Use = "Task",
                         View = "Default"
                     }).ToList(),
                 },
                 TopicId = topicId
             };
+
+            result.Relations.References.Add(new TopicContentRelationReference
+            {
+                IsInferredFromContent = true,
+                Metadata = new List<DTO.KeyValuePair>(),
+                PyramidLevel = null,
+                RelationTypeKey = Guid.Empty,
+                SequenceNumber = ++i,
+                TargetTopicGuid = thumbnailTolpic.Guid,
+                TargetTopicNamespaceUri = AskDelphiCMSAdapter.ImageTopicNamespace,
+                TargetTopicTitle = thumbnailTolpic.BasicData.TopicTitle,
+                Use = "Thumbnail",
+                View = "Default"
+            });
+            return result;
         }
 
         private static string CreateImolaProcessTopicJSON(ProcessEntry process)
@@ -182,14 +207,14 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                     TopicType = AskDelphiCMSAdapter.TaskTopicTypeTitle,
                     Version = AskDelphiCMSAdapter.DefaultVersion
                 },
-                Content = reateImolaTaskTopicJSON(task),
+                Content = CreateImolaTaskTopicJSON(task),
                 Guid = new Guid(task.Id),
                 Relations = new TopicContentRelationData(),
                 TopicId = taskTopicId
             };
         }
 
-        private static string reateImolaTaskTopicJSON(ProcessEntry task)
+        private static string CreateImolaTaskTopicJSON(ProcessEntry task)
         {
             return JsonSerializer.Serialize(new Imola.API.Interop.Content.TaskTopic
             {
@@ -205,19 +230,6 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                 TopicLearning = null,
                 TopicType = AskDelphiCMSAdapter.TaskTopicTypeTitle
             });
-        }
-
-        public async Task<IEnumerable<TopicDescriptor>> GetDescriptors(FileInfo file, string topicId)
-        {
-            ProcessEntry contents = LoadContents(file);
-
-            List<TopicDescriptor> result = new()
-            {
-                ConvertToDescriptor(contents, topicId, AskDelphiCMSAdapter.ProcessTopicTypeTitle, AskDelphiCMSAdapter.ProcessTopicNamespace)
-            };
-            if (null != contents.Tasks) result.AddRange(contents.Tasks.Select(x => ConvertToDescriptor(x, $"{topicId}\\{x.Id}", AskDelphiCMSAdapter.TaskTopicTypeTitle, AskDelphiCMSAdapter.TaskTopicNamespace)));
-
-            return await Task.FromResult(result);
         }
 
         private ProcessEntry LoadContents(FileInfo file)
@@ -242,6 +254,54 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                 Type = ttTitle,
                 Version = AskDelphiCMSAdapter.DefaultVersion
             };
+        }
+
+        private static string GetProcessTopicID(string topicId)
+        {
+            return '/' + topicId.Trim('/').Split('/').FirstOrDefault();
+        }
+
+        private bool IsChildTopic(string topicId)
+        {
+            return topicId.Trim('/').Contains('/');
+        }
+
+        public async Task<IEnumerable<TopicDescriptor>> GetDescriptors(IOperationContext operationContext, FileInfo file, string topicId)
+        {
+            ProcessEntry contents = LoadContents(file);
+
+            List<TopicDescriptor> result = new()
+            {
+                ConvertToDescriptor(contents, topicId, AskDelphiCMSAdapter.ProcessTopicTypeTitle, AskDelphiCMSAdapter.ProcessTopicNamespace)
+            };
+            if (null != contents.Tasks) result.AddRange(contents.Tasks.Select(x => ConvertToDescriptor(x, $"{topicId}/{x.Id}", AskDelphiCMSAdapter.TaskTopicTypeTitle, AskDelphiCMSAdapter.TaskTopicNamespace)));
+            TopicContent imageTopic = CreateImageTopic(operationContext, contents, $"{topicId}/{contents.Thumbnail}");
+            result.Add(TopicContentToDescriptor(imageTopic));
+
+            return await Task.FromResult(result);
+        }
+
+        private static TopicDescriptor TopicContentToDescriptor(TopicContent imageTopic)
+        {
+            return new TopicDescriptor
+            {
+                TopicId = imageTopic.TopicId,
+                Guid = imageTopic.Guid,
+                Status = string.Empty,
+                Title = imageTopic.BasicData.TopicTitle,
+                Namespace = imageTopic.BasicData.Namespace,
+                Type = imageTopic.BasicData.TopicType,
+                Version = imageTopic.BasicData.Version
+            };
+        }
+
+        private void MoveRequestedChildToHeadOfTheList(string topicId, SCR<TopicContent[]> response)
+        {
+            TopicContent firstItem = response.Result.Where(x => x.TopicId == topicId).FirstOrDefault();
+            List<TopicContent> list = response.Result.ToList();
+            list.RemoveAll(x => x.TopicId == topicId);
+            list.Insert(0, firstItem);
+            response.Result = list.ToArray(); // a bit of a hack :-D
         }
     }
 }

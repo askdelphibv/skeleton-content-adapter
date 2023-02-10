@@ -2,15 +2,15 @@
 
 namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
 {
-    public partial class TopicFactory
+    /// <summary>
+    /// Process or Task entries in our JSON file in our same data folder use this structure.
+    /// </summary>
+    public class ProcessEntry
     {
-        public class ProcessEntry
-        {
-            public string Id { get; set; }
-            public string Title { get; set; }
-            public string Thumbnail { get; set; }
-            public string Content { get; set; }
-            public IEnumerable<ProcessEntry> Tasks { get; set; }
-        }
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Thumbnail { get; set; }
+        public string Content { get; set; }
+        public IEnumerable<ProcessEntry> Tasks { get; set; }
     }
 }

@@ -9,6 +9,6 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
     public interface ITopicFactory
     {
         Task<SCR<TopicContent[]>> CreateTopic(IOperationContext operationContext, string topicId, FileInfo file);
-        Task<IEnumerable<TopicDescriptor>> GetDescriptors(FileInfo file, string topicId);
+        Task<IEnumerable<TopicDescriptor>> GetDescriptors(IOperationContext operationContext, FileInfo file, string topicId);
     }
 }

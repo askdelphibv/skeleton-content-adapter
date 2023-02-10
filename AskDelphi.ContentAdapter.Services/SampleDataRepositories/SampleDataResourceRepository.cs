@@ -42,7 +42,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
         {
             dataLoaded.WaitOne(); 
 
-            FileInfo resourceFileInfo = new FileInfo(Path.Combine(dataFolder.FullName, resourceId));
+            FileInfo resourceFileInfo = new FileInfo(Path.Combine(dataFolder.FullName, resourceId.TrimStart('/')));
             if (!resourceFileInfo.Exists)
             {
                 return SCR<ResourceMetadata>.FromError(ErrorCodes.ResourceRepositoryFileNotFound, ErrorCodes.ResourceRepositoryFileNotFoundMessage, System.Net.HttpStatusCode.NotFound);
@@ -68,7 +68,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             DirectoryInfo parent = dataFolder;
             if (!string.IsNullOrEmpty(folderId))
             {
-                parent = new DirectoryInfo(Path.Combine(dataFolder.FullName, folderId));
+                parent = new DirectoryInfo(Path.Combine(dataFolder.FullName, folderId.TrimStart('/')));
                 if (!parent.Exists)
                 {
                     return SCR<(IEnumerable<FolderDescriptor> folders, IEnumerable<ResourceDescriptor> resources)>.FromError(ErrorCodes.ResourceRepositoryFileNotFound, ErrorCodes.ResourceRepositoryFileNotFoundMessage, System.Net.HttpStatusCode.NotFound);
@@ -94,7 +94,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
         {
             dataLoaded.WaitOne();
 
-            FileInfo resourceFileInfo = new FileInfo(Path.Combine(dataFolder.FullName, resourceId));
+            FileInfo resourceFileInfo = new FileInfo(Path.Combine(dataFolder.FullName, resourceId.TrimStart('/')));
             if (!resourceFileInfo.Exists)
             {
                 return SCR<(Stream resourceString, long contentLength, string contentType)>.FromError(ErrorCodes.ResourceRepositoryFileNotFound, ErrorCodes.ResourceRepositoryFileNotFoundMessage, System.Net.HttpStatusCode.NotFound);
@@ -132,11 +132,11 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             List<ResourceDescriptor> result = new();
             foreach (var subFolder in folder.GetDirectories())
             {
-                var children = await SearchForResourceInFolder(operationContext, query, subFolder, Path.Combine(folderId, subFolder.Name));
+                var children = await SearchForResourceInFolder(operationContext, query ?? "", subFolder, Path.Combine(folderId, subFolder.Name));
                 result.AddRange(children);
             }
-            var files = folder.GetFiles().Where(f => f.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) != -1).Select(x => FileInfoToResourceDescriptor(folderId, x));
-
+            var files = folder.GetFiles().Where(f => f.Name.IndexOf(query ?? "", StringComparison.OrdinalIgnoreCase) != -1).Select(x => FileInfoToResourceDescriptor(folderId, x));
+            result.AddRange(files);
             return result;
         }
 
@@ -146,7 +146,7 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             {
                 ContentLength = x.Length,
                 Filename = x.Name,
-                ResourceId = Path.Combine(folderId ?? string.Empty, x.Name),
+                ResourceId = $"{folderId ?? string.Empty}/{x.Name}",
                 LastModified = x.LastWriteTimeUtc.ToString("o"),
                 MimeType = DefaultMimetype,
                 Status = "published"
