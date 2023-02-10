@@ -26,6 +26,11 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             throw new NotImplementedException();
         }
 
+        public Task<SCR<bool>> RefreshAsync(IOperationContext operationContext)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<SCR<(IEnumerable<ResourceDescriptor> resources, int totalCount, string continuationToken)>> SearchForResource(IOperationContext operationContext, string query, int page, int size, string continuationToken)
         {
             throw new NotImplementedException();

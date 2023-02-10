@@ -1,0 +1,852 @@
+{
+	"info": {
+		"_postman_id": "f10603fc-8bed-427a-ab47-366097dd5332",
+		"name": "Sample Adapter (Skeleton)",
+		"description": "Protocol\r\nThe implementing system should offer this API on HTTPS only. AskDelphi will not connect to plain HTTP endpoints or HTTPS endpoints that do not at least support TLS 1.2. \r\nRequest versioning\r\nAll API methods must require a query parameter as input:\r\n•\tapi-version\r\nIf this version of the specification is followed the value must be 1\r\nStandardized API responses and response versioning\r\nUpon success, all API methods will always return a JSON-structure like this:\r\n{\r\n   \"success\": \"true\",\r\n   \"version\": \"1\",\r\n   … response data …\r\n}\r\nThe version field must indicate which API version specification has been used to create the response objects. This version number must not exceed the version number specified in api-version on the input query string.\r\nUpon failure, all API methods will return the following structure:\r\n{\r\n   \"success\": \"false\",\r\n   \"version\": \"1\",\r\n   \"code\": \"<error code string>\",\r\n   \"message\": \"<error message string>\",\r\n   \"id\": \"<string>\",\r\n}\r\nThe code-field should uniquely identify the cause of the error, in a way that makes sense to the implementing system and can be used to track down the underlying issue, for example in the service logs.\r\nThe message field may contain some additional information about the problem. It must never return any implementation details such as stack-traces and key or token values.\r\nThe id field should contain a unique operation ID.\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2795520"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login (local)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"pm.environment.set(\"APIToken\", jsonObj.token);\r",
+									"pm.environment.set(\"APIRefresh\", jsonObj.refresh);\r",
+									"\r",
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"BaseUrl\", \"https://localhost:44309/\");\r",
+									"pm.environment.set(\"LoginToken\", \"api-user-1:this-is-a-sample-you-should-generate-a-guid-yourself-here\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    { \"type\": \"http://tempuri.org/askdelphi/remote-system-id\", \"value\": \"localhost-sample\" },\r\n    { \"type\": \"http://tempuri.org/askdelphi/project-id\", \"value\": \"a8a5544b-9797-416e-aa16-0b9395847624\" },\r\n    { \"type\": \"http://tempuri.org/askdelphi/tenant-id\", \"value\": \"bab2dbe2-ce2c-4884-8a3c-16e5e712d1c2\" }\r\n]"
+						},
+						"url": {
+							"raw": "{{BaseUrl}}api/auth/login",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "This method can be used to ‘log in’ to the adapter using the secret API key that should only be known to systems that have access to the API.\r\n\r\nIf claims are specified, the API may encode some details of the logged-in user in the claims part of the returned JWT token. Having those details in there could allow other calls to this API to customize results based on the logged-in user’s authentication claims.\r\n\r\nA refresh token may be returned to allow an implementation to extend the lifetime of a JWT token. Supporting this functionality is entirely optional. Functionally there is no need to support refresh tokens, as the caller should be able to use the login endpoint again to get a new token.\r\n\r\nThe lifetime of the returned JWT token should be limited and should not exceed 60 minutes.\r\n\r\nJWT Tokens must comply with [RFC7519] and must include “aud”, “nbf” and “exp” fields.\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/auth/logout",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"GET request should fail\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400]);\r",
+									"});\r",
+									"pm.test(\"Metod is not supported\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(false);\r",
+									"    pm.expect(jsonObj.code).to.be.equal(\"E_SUPP\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/auth/refresh?refresh={{APIRefresh}}",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							],
+							"query": [
+								{
+									"key": "refresh",
+									"value": "{{APIRefresh}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Content",
+			"item": [
+				{
+					"name": "folders (root)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/content/folders?folderId=",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"content",
+								"folders"
+							],
+							"query": [
+								{
+									"key": "folderId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search (root)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"folderId\": \"\",\r\n  \"query\": null,\r\n  \"topicTypes\": [\r\n    \"\"\r\n  ],\r\n  \"tags\": null,\r\n  \"page\": 0,\r\n  \"size\": 25,\r\n  \"continuationToken\": null\r\n}"
+						},
+						"url": {
+							"raw": "{{BaseUrl}}api/content/search",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"content",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "metadata (process1.json)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/content/metadata?topicId=process1.json",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"content",
+								"metadata"
+							],
+							"query": [
+								{
+									"key": "topicId",
+									"value": "process1.json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "content (EPC)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/content/content?topicId=process1.json",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"content",
+								"content"
+							],
+							"query": [
+								{
+									"key": "topicId",
+									"value": "process1.json"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Resources",
+			"item": [
+				{
+					"name": "list (all)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/list",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/search?query=&page=1&size=10",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "metadata (process1.json)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonObj = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									"pm.test(\"Metod returns success\", function() {\r",
+									"    pm.expect(jsonObj.success).to.be.equal(true);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/metadata?resourceId=sample1.png",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"metadata"
+							],
+							"query": [
+								{
+									"key": "resourceId",
+									"value": "sample1.png"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "content (process1.json)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "HEAD",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"content"
+							],
+							"query": [
+								{
+									"key": "resourceId",
+									"value": "sample1.png"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "content (process1.json, partial, first 128KB)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 206]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Range",
+								"value": "bytes=0-131211",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"content"
+							],
+							"query": [
+								{
+									"key": "resourceId",
+									"value": "sample1.png"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "content (process1.json, all)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"content"
+							],
+							"query": [
+								{
+									"key": "resourceId",
+									"value": "sample1.png"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "content (process1.json)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful GET request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{APIToken}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{LoginToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"host": [
+								"{{BaseUrl}}api"
+							],
+							"path": [
+								"resources",
+								"content"
+							],
+							"query": [
+								{
+									"key": "resourceId",
+									"value": "sample1.png"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
