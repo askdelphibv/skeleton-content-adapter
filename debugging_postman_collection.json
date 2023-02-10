@@ -301,7 +301,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"folderId\": \"\",\r\n  \"query\": null,\r\n  \"topicTypes\": [\r\n    \"\"\r\n  ],\r\n  \"tags\": null,\r\n  \"page\": 0,\r\n  \"size\": 25,\r\n  \"continuationToken\": null\r\n}"
+							"raw": "{\r\n  \"folderId\": \"\",\r\n  \"query\": null,\r\n  \"topicTypes\": [\r\n    \"\"\r\n  ],\r\n  \"tags\": null,\r\n  \"page\": 0,\r\n  \"size\": 250,\r\n  \"continuationToken\": null\r\n}"
 						},
 						"url": {
 							"raw": "{{BaseUrl}}api/content/search",
@@ -355,7 +355,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}api/content/metadata?topicId=process1.json",
+							"raw": "{{BaseUrl}}api/content/metadata?topicId=/process1.json/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -366,7 +366,7 @@
 							"query": [
 								{
 									"key": "topicId",
-									"value": "process1.json"
+									"value": "/process1.json/sample1.png"
 								}
 							]
 						}
@@ -412,7 +412,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}api/content/content?topicId=process1.json",
+							"raw": "{{BaseUrl}}api/content/content?topicId=/process1.json/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -423,7 +423,7 @@
 							"query": [
 								{
 									"key": "topicId",
-									"value": "process1.json"
+									"value": "/process1.json/sample1.png"
 								}
 							]
 						}
@@ -590,7 +590,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}api/resources/metadata?resourceId=sample1.png",
+							"raw": "{{BaseUrl}}api/resources/metadata?resourceId=/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -601,7 +601,7 @@
 							"query": [
 								{
 									"key": "resourceId",
-									"value": "sample1.png"
+									"value": "/sample1.png"
 								}
 							]
 						}
@@ -643,7 +643,7 @@
 						"method": "HEAD",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -654,7 +654,7 @@
 							"query": [
 								{
 									"key": "resourceId",
-									"value": "sample1.png"
+									"value": "/sample1.png"
 								}
 							]
 						}
@@ -701,7 +701,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -712,7 +712,7 @@
 							"query": [
 								{
 									"key": "resourceId",
-									"value": "sample1.png"
+									"value": "/sample1.png"
 								}
 							]
 						}
@@ -753,7 +753,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -764,7 +764,7 @@
 							"query": [
 								{
 									"key": "resourceId",
-									"value": "sample1.png"
+									"value": "/sample1.png"
 								}
 							]
 						}
@@ -805,7 +805,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}api/resources/content?resourceId=sample1.png",
+							"raw": "{{BaseUrl}}api/resources/content?resourceId=/sample1.png",
 							"host": [
 								"{{BaseUrl}}api"
 							],
@@ -816,7 +816,7 @@
 							"query": [
 								{
 									"key": "resourceId",
-									"value": "sample1.png"
+									"value": "/sample1.png"
 								}
 							]
 						}
