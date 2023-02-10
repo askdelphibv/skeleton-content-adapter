@@ -39,10 +39,5 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
         {
             throw new NotImplementedException();
         }
-
-        public Task UpdateTopicTypesFromContentDesignAsync(IOperationContext operationContext, TopicContent[] contents)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
