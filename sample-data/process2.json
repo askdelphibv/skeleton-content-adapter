@@ -1,0 +1,53 @@
+{
+    "id": "0a433063-e19f-423a-b554-10f51ec3518a",
+    "title": "Cleaning the house",
+    "thumbnail": "sample2.png",
+    "content": "<p>Follow this step-by-step guide to make the most of your time and clean your house fast.</p>",
+    "tasks": [
+        {
+            "id": "72353553-0daa-475f-a47f-9adbfd6a843a",
+            "title": "Gather all your cleaning tools",
+            "content": "<p>Start with gathering all your cleaning tools and supplies. Keep them together at all times and take them all on yoour cleaning journey.</p>"
+        },
+        {
+            "id": "7f56815e-3b4a-4388-b848-9b541c3f0544",
+            "title": "Get rid of all trash",
+            "content": "<p>Walk around the house and gather everything that is considered trash.</p><p>Pick this up and either throw it out or gather it in one place.</p>"
+        },
+        {
+            "id": "2580a3d9-02ee-42f8-9999-2a6d325a3660",
+            "title": "Clean up the clutter",
+            "content": "<p>Now the house is free of trash, walk around and put everything back where it belongs. Things that have a place go there. Gather all items for which you can't find a place in one location.</p>"
+        },
+        {
+            "id": "38659a8a-b51b-4906-a51a-1c1cacbe8d0c",
+            "title": "Dust",
+            "content": "<p>Now all surfaces are cleared of trash and clutter, it should be reasonably straightforwartd to dust. Just use a static cloth or feather duster to get rid of all dust.</p>"
+        },
+        {
+            "id": "515414a9-6fce-48a4-a277-a7c321c7aa5b",
+            "title": "Vacuum all rooms",
+            "content": "<p>Having dusted, it's time to take the vacuum cleaner and vacuum all of the house. Focus on the floors, if you feel like it you can also do stairs, furniture etc.</p><p>As long as the floor isn't wet, you can also vaccum the bathroom, kitchen and toilets.</p>"
+        },
+        {
+            "id": "98e0f3d6-6270-46c1-99fb-2c6abd76e0d2",
+            "title": "Clean surfaces",
+            "content": "<p>Take some clean cloths and some soapy water, spray or disinfectant and clean all surfaces. If you feel like it, also clean remote controls, light switches, door handles and decorations.</p>"
+        },
+        {
+            "id": "4e08cc4e-cb34-4531-be29-16a5a29fe778",
+            "title": "Sweep and mop",
+            "content": "<p>If you could not vaccum the bathroom, toilet or kitchjen before, you can sweep it now to remove most of the dust and hairs. Only after doing that pick upa mop and start mopping. Rinse the mop every once in a while.</p>"
+        },
+        {
+            "id": "ecf689c1-1dec-4369-ae98-c438d3326522",
+            "title": "Clean the cleaning tools",
+            "content": "<p>You're done cleaning. Now make sure the mop is in the washing machine and make sure you wipe down those cleaning tools that get dirty.</p>"
+        },
+        {
+            "id": "1185a1ad-5af2-4935-94e1-7409297952bd",
+            "title": "Take out the trash and organize the piles",
+            "content": "<p>If you gatehred trash during cleaning, take it out now. Also try to give as much of the items without a place a place of their own.</p>"
+        }
+    ]
+}

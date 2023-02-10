@@ -1,4 +1,5 @@
 ﻿using AskDelphi.ContentAdapter.ServiceModel;
+using AskDelphi.ContentAdapter.Services.SampleDataRepositories;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace AskDelphi.ContentAdapter.Services
         {
             services.AddSingleton<ITopicRepository, SampleDataRepositories.SampleDataTopicRepository>();
             services.AddSingleton<IResourceRepository, SampleDataRepositories.SampleDataResourceRepository>();
+            services.AddSingleton<ITopicFactory, TopicFactory>();
+            services.AddSingleton<ICMSAdapter, AskDelphiCMSAdapter>();
         }
     }
 }

@@ -1,0 +1,28 @@
+{
+    "id": "8329c605-4ae3-483b-a6f3-d7b5ca7b7227",
+    "title": "Creating your own content adapter",
+    "thumbnail": "sample1.png",
+    "content": "<p>This process description will describe in broad terms what you need to do in order to build your own content adapter.</p>",
+    "tasks": [
+        {
+            "id": "698e74a3-7c9f-410d-bc5a-a89b3a69a971",
+            "title": "Decide on the publication structure",
+            "content": "<p>Before creating an adapter you must know what you are tring to achieve. It should be clear how content needs to be presented in the AskDelphi publication.</p>"
+        },
+        {
+            "id": "c6e1156e-8931-4b69-9056-c06d253fee19",
+            "title": "Analyze your content provider",
+            "content": "<p>It's important to know how exactly content is going to be exported to you. Are you getting a bunch of files, or are you setting up a live connection with an external content management system?</p><p>Once you know which is the case, you can prepare for this. Make sure you're technically ready to address all individual content parts that you need in the AskDelphi publication later.</p>"
+        },
+        {
+            "id": "8aef56d1-8b55-4ef3-9f64-0ab81888b2b4",
+            "title": "Create a mapping plan for the content",
+            "content": "<p>Having a clear view of the publication structure, and knowing where to get alkl content from, the next step is to write down hoe the mapping.</p><p>This plan includes the desired topic types that we're mapping, and where all data in those topics comes from exactly, including related documents, resources, images and metadata such as tags.</p>"
+        },
+        {
+            "id": "b16113b2-6c04-495a-ad44-59e9277df178",
+            "title": "Clone skeleton and implement adapter",
+            "content": "<p>Now we know which data we can get where and where it needs to go to, the adapter can be implemented.</p><p>Just implement ITopicRepository and IResourceRepository to return the topics and resources that you desire.</p>"
+        }
+    ]
+}

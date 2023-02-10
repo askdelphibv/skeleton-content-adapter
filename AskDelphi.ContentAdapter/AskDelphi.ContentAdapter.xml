@@ -425,9 +425,6 @@
         <member name="M:AskDelphi.ContentAdapter.DTO.ResourceContentResponse.#ctor(AskDelphi.ContentAdapter.ServiceModel.IOperationContext)">
             <summary></summary>
         </member>
-        <member name="M:AskDelphi.ContentAdapter.DTO.ResourceContentResponse.Initialize(AskDelphi.ContentAdapter.ServiceModel.SCR{AskDelphi.ContentAdapter.ServiceModel.DTO.ResourceContent})">
-            <summary></summary>
-        </member>
         <member name="T:AskDelphi.ContentAdapter.DTO.ResourcesListResponse">
             <summary>
             
@@ -536,7 +533,7 @@
             </summary>
             
         </member>
-        <member name="M:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService},AskDelphi.ContentAdapter.Services.IOperationContextFactory,Microsoft.Extensions.Configuration.IConfiguration,AskDelphi.ContentAdapter.ServiceModel.ITopicRepository)">
+        <member name="M:AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService.#ctor(Microsoft.Extensions.Logging.ILogger{AskDelphi.ContentAdapter.HostedServices.CacheSynchronizationService},AskDelphi.ContentAdapter.Services.IOperationContextFactory,Microsoft.Extensions.Configuration.IConfiguration,AskDelphi.ContentAdapter.ServiceModel.ITopicRepository,AskDelphi.ContentAdapter.ServiceModel.IResourceRepository)">
             <summary>
             
             </summary>
