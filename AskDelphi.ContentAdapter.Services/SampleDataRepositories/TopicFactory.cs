@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -43,7 +44,14 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             result.Add(imageTopic);
             if (null != process.Tasks)
             {
-                result.AddRange(process.Tasks.Select(x => CreateTaskTopic(operationContext, x, $"{processTopicId}/{x.Id}")));
+                foreach (var task in process.Tasks)
+                {
+                    TopicContent urlTopic = CreateExternalUrlTopic(operationContext, process, $"{processTopicId}/{task.Id}/external-url-1");
+                    result.Add(urlTopic);
+
+                    TopicContent taskTopic = CreateTaskTopic(operationContext, task, urlTopic, $"{processTopicId}/{task.Id}");
+                    result.Add(taskTopic);
+                }
             }
 
             SCR<TopicContent[]> response = await Task.FromResult(SCR<TopicContent[]>.FromData(result.ToArray()));
@@ -89,6 +97,36 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             };
         }
 
+        private TopicContent CreateExternalUrlTopic(IOperationContext operationContext, ProcessEntry process, string topicId)
+        {
+            string title = $"External URL for {process.Title} - {topicId}";
+            return new TopicContent
+            {
+                BasicData = new TopicContentBasicData
+                {
+                    Description = string.Empty,
+                    Enabled = true,
+                    IsDescriptionCalculated = false,
+                    IsEmpty = false,
+                    IsPublished = true,
+                    MetricsTags = new string[] { },
+                    ModificationDate = DateTime.UtcNow.ToString("o"),
+                    Namespace = AskDelphiCMSAdapter.ExternalContentTopicNamespace,
+                    TopicTitle = title,
+                    TopicTitleMarkup = title,
+                    TopicType = AskDelphiCMSAdapter.ExternalContentTopicTypeTitle,
+                    Version = AskDelphiCMSAdapter.DefaultVersion
+                },
+                Content = CreateDoppioExternalContentTopicJSON(process, topicId, title),
+                Guid = GuidUtility.Create(GuidUtility.UrlNamespace, topicId), // the path is unique for this resource so perfect for creating a guid from
+                Relations = new TopicContentRelationData
+                {
+                    References = new List<TopicContentRelationReference>(),
+                },
+                TopicId = topicId
+            };
+        }
+
         private static string CreateDoppioImageTopicJSON(ProcessEntry process, string resourcePath, string mimeType)
         {
             return JsonSerializer.Serialize(new Imola.API.Interop.Content.ImageTopic
@@ -110,10 +148,29 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             });
         }
 
+        private static string CreateDoppioExternalContentTopicJSON(ProcessEntry process, string topicId, string title)
+        {
+            return JsonSerializer.Serialize(new Imola.API.Interop.Content.ExternalContentTopic
+            {
+                Title = title,
+                Description = process.Content,
+                Guid = GuidUtility.Create(GuidUtility.UrlNamespace, topicId),
+                IsPublished = true,
+                OriginalTitle = title,
+                TitleMarkup = title,
+                TopicLearning = null,
+                TopicType = AskDelphiCMSAdapter.ExternalContentTopicTypeTitle,
+                Keywords = "",
+                LinkType = "link",
+                OpenIn = "newwindow",
+                Url = $"https://www.google.com/search?q={WebUtility.UrlEncode(topicId)}"
+            });
+        }
+
         private async Task<TopicContent> CreateProcessTopic(IOperationContext operationContext, ProcessEntry process, string topicId, TopicContent thumbnailTolpic)
         {
             int i = 0;
-            Guid processTaskRelationTypeKey = await cmsAdapter.GetRelationTypeKeyFor(operationContext, AskDelphiCMSAdapter.ProcessTaskRelationPyramidLevelTitle, 
+            Guid processTaskRelationTypeKey = await cmsAdapter.GetRelationTypeKeyFor(operationContext, AskDelphiCMSAdapter.ProcessTaskRelationPyramidLevelTitle,
                 AskDelphiCMSAdapter.TaskTopicTypeTitle, AskDelphiCMSAdapter.TaskTopicNamespace, "Relation", "Default");
             TopicContent result = new TopicContent
             {
@@ -188,9 +245,9 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
             });
         }
 
-        private TopicContent CreateTaskTopic(IOperationContext operationContext, ProcessEntry task, string taskTopicId)
+        private TopicContent CreateTaskTopic(IOperationContext operationContext, ProcessEntry task, TopicContent urlTopic, string taskTopicId)
         {
-            return new TopicContent
+            var result = new TopicContent
             {
                 BasicData = new TopicContentBasicData
                 {
@@ -212,6 +269,22 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                 Relations = new TopicContentRelationData(),
                 TopicId = taskTopicId
             };
+
+            result.Relations.AddReference(new TopicContentRelationReference
+            {
+                IsInferredFromContent = false,
+                Metadata = new List<DTO.KeyValuePair>(),
+                PyramidLevel = AskDelphiCMSAdapter.TaskURLPyramidLevelTitle,
+                RelationTypeKey = AskDelphiCMSAdapter.TaskURLRelationType,
+                SequenceNumber = 1,
+                TargetTopicGuid = urlTopic.Guid,
+                TargetTopicNamespaceUri = urlTopic.BasicData.Namespace,
+                TargetTopicTitle = urlTopic.BasicData.TopicTitle,
+                Use = "External URL",
+                View = "Default"
+            });
+
+            return result;
         }
 
         private static string CreateImolaTaskTopicJSON(ProcessEntry task)
@@ -227,6 +300,8 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
                 Keywords = string.Empty,
                 OriginalTitle = task.Title,
                 TitleMarkup = task.Title,
+                Level1Title= task.Title,
+                Level2Title= string.Empty,
                 TopicLearning = null,
                 TopicType = AskDelphiCMSAdapter.TaskTopicTypeTitle
             });

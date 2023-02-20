@@ -24,8 +24,16 @@ namespace AskDelphi.ContentAdapter.Services.SampleDataRepositories
         public static readonly string TaskTopicNamespace = "http://tempuri.org/imola-task";
         public static readonly string ImageTopicTypeTitle = "Image";
         public static readonly string ImageTopicNamespace = "http://tempuri.org/doppio-image";
+        public static readonly string ExternalContentTopicNamespace = "http://tempuri.org/doppio-external";
+        public static readonly string ExternalContentTopicTypeTitle = "External URL";
+
         public static readonly string ProcessTaskRelationPyramidLevelTitle = "Task";
-        public static readonly Guid ProcessTaskRelationType = new Guid("7019e146-6b57-42e5-afe1-0459615d49c2");
+        // Update this guid from the content design, this is the Relation Type Guid (topic type process, relation type task at task PL)
+        public static readonly Guid ProcessTaskRelationType = new Guid("2edaa270-751d-4723-89e5-0825c2b4a650");
+
+        public static readonly string TaskURLPyramidLevelTitle = "Reference";
+        // Update this guid from the content design, this is the Relation Type Guid (topic type task, relation type Reference at Reference PL)
+        public static readonly Guid TaskURLRelationType = new Guid("57e2f985-0651-42ee-b979-3c536d959e4c");
 
         public static readonly string DefaultVersion = "1.0";
 
